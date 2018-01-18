@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "PKShortVideo"
-  s.version      = “1.0.2”
+  s.version      = "1.0.2"
   s.license      = "MIT"
   s.summary      = "A video library like WeChat short video for iOS."
   s.homepage     = "https://github.com/pepsikirk/PKShortVideo"
