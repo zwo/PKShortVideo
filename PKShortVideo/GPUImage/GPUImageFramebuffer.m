@@ -1,5 +1,5 @@
 #import "GPUImageFramebuffer.h"
-#import "GPUImageContext.h"
+#import "GPUImageOutput.h"
 
 @interface GPUImageFramebuffer()
 {
@@ -434,6 +434,15 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size)
     GLubyte * bufferBytes = CVPixelBufferGetBaseAddress(renderTarget);
     [self unlockAfterReading];
     return bufferBytes;
+#else
+    return NULL; // TODO: do more with this on the non-texture-cache side
+#endif
+}
+
+- (CVPixelBufferRef )pixelBuffer;
+{
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+    return renderTarget;
 #else
     return NULL; // TODO: do more with this on the non-texture-cache side
 #endif

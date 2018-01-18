@@ -1,5 +1,6 @@
 #import "GPUImageFramebufferCache.h"
 #import "GPUImageContext.h"
+#import "GPUImageOutput.h"
 
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
@@ -49,7 +50,7 @@
     framebufferCache = [[NSMutableDictionary alloc] init];
     framebufferTypeCounts = [[NSMutableDictionary alloc] init];
     activeImageCaptureList = [[NSMutableArray alloc] init];
-    framebufferCacheQueue = dispatch_queue_create("com.sunsetlakesoftware.GPUImage.framebufferCacheQueue", NULL);
+    framebufferCacheQueue = dispatch_queue_create("com.sunsetlakesoftware.GPUImage.framebufferCacheQueue", GPUImageDefaultQueueAttribute());
     
     return self;
 }

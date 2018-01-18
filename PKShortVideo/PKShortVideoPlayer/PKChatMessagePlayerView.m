@@ -10,7 +10,7 @@
 #import "PKVideoDecoder.h"
 #import "GPUImageContext.h"
 #import "PKColorConversion.h"
-
+#import "GPUImageOutput.h"
 @interface PKChatMessagePlayerView () <PKVideoDecoderDelegate> {
     GLuint displayRenderbuffer, displayFramebuffer;
     GLint displayPositionAttribute, displayTextureCoordinateAttribute;

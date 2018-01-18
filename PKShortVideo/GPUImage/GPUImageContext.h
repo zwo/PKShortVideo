@@ -2,12 +2,18 @@
 #import "GPUImageFramebuffer.h"
 #import "GPUImageFramebufferCache.h"
 
-void runSynchronouslyOnVideoProcessingQueue(void (^block)(void));
-void runAsynchronouslyOnVideoProcessingQueue(void (^block)(void));
-
 #define GPUImageRotationSwapsWidthAndHeight(rotation) ((rotation) == kGPUImageRotateLeft || (rotation) == kGPUImageRotateRight || (rotation) == kGPUImageRotateRightFlipVertical || (rotation) == kGPUImageRotateRightFlipHorizontal)
 
-typedef enum { kGPUImageNoRotation, kGPUImageRotateLeft, kGPUImageRotateRight, kGPUImageFlipVertical, kGPUImageFlipHorizonal, kGPUImageRotateRightFlipVertical, kGPUImageRotateRightFlipHorizontal, kGPUImageRotate180 } GPUImageRotationMode;
+typedef NS_ENUM(NSUInteger, GPUImageRotationMode) {
+	kGPUImageNoRotation,
+	kGPUImageRotateLeft,
+	kGPUImageRotateRight,
+	kGPUImageFlipVertical,
+	kGPUImageFlipHorizonal,
+	kGPUImageRotateRightFlipVertical,
+	kGPUImageRotateRightFlipHorizontal,
+	kGPUImageRotate180
+};
 
 @interface GPUImageContext : NSObject
 
@@ -41,4 +47,18 @@ typedef enum { kGPUImageNoRotation, kGPUImageRotateLeft, kGPUImageRotateRight, k
 // Manage fast texture upload
 + (BOOL)supportsFastTextureUpload;
 
+@end
+
+@protocol GPUImageInput <NSObject>
+- (void)newFrameReadyAtTime:(CMTime)frameTime atIndex:(NSInteger)textureIndex;
+- (void)setInputFramebuffer:(GPUImageFramebuffer *)newInputFramebuffer atIndex:(NSInteger)textureIndex;
+- (NSInteger)nextAvailableTextureIndex;
+- (void)setInputSize:(CGSize)newSize atIndex:(NSInteger)textureIndex;
+- (void)setInputRotation:(GPUImageRotationMode)newInputRotation atIndex:(NSInteger)textureIndex;
+- (CGSize)maximumOutputSize;
+- (void)endProcessing;
+- (BOOL)shouldIgnoreUpdatesToThisTarget;
+- (BOOL)enabled;
+- (BOOL)wantsMonochromeInput;
+- (void)setCurrentlyReceivingMonochromeInput:(BOOL)newValue;
 @end

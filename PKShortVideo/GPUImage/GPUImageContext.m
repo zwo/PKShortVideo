@@ -2,46 +2,9 @@
 #import <OpenGLES/EAGLDrawable.h>
 #import <AVFoundation/AVFoundation.h>
 
-void runSynchronouslyOnVideoProcessingQueue(void (^block)(void))
-{
-    dispatch_queue_t videoProcessingQueue = [GPUImageContext sharedContextQueue];
-#if !OS_OBJECT_USE_OBJC
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (dispatch_get_current_queue() == videoProcessingQueue)
-#pragma clang diagnostic pop
-#else
-        if (dispatch_get_specific([GPUImageContext contextKey]))
-#endif
-        {
-            block();
-        }else
-        {
-            dispatch_sync(videoProcessingQueue, block);
-        }
-}
-
-void runAsynchronouslyOnVideoProcessingQueue(void (^block)(void))
-{
-    dispatch_queue_t videoProcessingQueue = [GPUImageContext sharedContextQueue];
-    
-#if !OS_OBJECT_USE_OBJC
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (dispatch_get_current_queue() == videoProcessingQueue)
-#pragma clang diagnostic pop
-#else
-        if (dispatch_get_specific([GPUImageContext contextKey]))
-#endif
-        {
-            block();
-        }else
-        {
-            dispatch_async(videoProcessingQueue, block);
-        }
-}
-
 #define MAXSHADERPROGRAMSALLOWEDINCACHE 40
+
+extern dispatch_queue_attr_t GPUImageDefaultQueueAttribute(void);
 
 @interface GPUImageContext()
 {
@@ -70,7 +33,7 @@ static void *openGLESContextQueueKey;
     }
 
 	openGLESContextQueueKey = &openGLESContextQueueKey;
-    _contextQueue = dispatch_queue_create("com.sunsetlakesoftware.GPUImage.openGLESContextQueue", NULL);
+    _contextQueue = dispatch_queue_create("com.sunsetlakesoftware.GPUImage.openGLESContextQueue", GPUImageDefaultQueueAttribute());
     
 #if OS_OBJECT_USE_OBJC
 	dispatch_queue_set_specific(_contextQueue, openGLESContextQueueKey, (__bridge void *)self, NULL);
